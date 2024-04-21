@@ -10,33 +10,82 @@ Vitor Dias Carlos - 445 - GES
 
 #include <iostream>
 #include <string>
+#include <list>
 
 using namespace std;
 
-struct cidade{ //estrutura cidade
+struct estrada{ //estrutura estrada
+  int origem;
+  int destino;
+  int distancia;
+};
+
+struct Cidade{ //estrutura cidade
   int codigo;
   string nome;
   bool centro_pokemon;
+  list<estrada> vizinhos;
 };
 
-cidade cria_cidade(){ //função para criar cidade
-  cidade a;
-  cout<<"nome da cidade: ";
-  cin>>a.nome;
-  cout<<"codigo da cidade: ";
-  cin>>a.codigo;
-  cout<<"centro pokemon? (1 para sim, 0 para nao): ";
-  cin>>a.centro_pokemon;
-  return a;
+  void cria_cidade(int num_cidades,int num_estradas, Cidade cidade[]){ //função para criar cidade
+
+  for(int i=0; i< num_cidades; i++){
+    cidade[i].codigo = i;
+    cout<<"nome da cidade: ";
+    cin>>cidade[i].nome;
+    cout<<"centro pokemon? (1 para sim, 0 para nao): ";
+    cin>>cidade[i].centro_pokemon;
+  }
+
+
+    int origem, destino, distancia;
+  for(int i = 0; i < num_estradas; i++){
+    cout<<"entre com o codigo da cidade de origem, da de destino, e a distancia: ";
+    cin>>origem>>destino>>distancia;
+
+    cidade[origem].vizinhos.push_back({origem,destino,distancia});
+    cidade[destino].vizinhos.push_back({destino,origem,distancia});
+    
+  }
+
 }
+
+void mostra_cidades(int num_cidades, Cidade cidade[]){
+  for(int i=0; i<num_cidades; i++){
+    cout<<"codigo: "<<cidade[i].codigo<<endl;
+    cout<<"nome: "<<cidade[i].nome<<endl;
+    if(cidade[i].centro_pokemon == 1){
+      cout<<"tem centro pokemon"<<endl;
+    }else{
+      cout<<"nao tem centro pokemon"<<endl;
+        }
+    list<estrada>::iterator it;
+
+    cout<<"cidades vizinhas: ";
+    
+    for(it = cidade[i].vizinhos.begin(); it != cidade[i].vizinhos.end(); it++){
+      cout<<it->destino<<endl;
+    }
+ 
+  }
+
+}
+
 int main() { //função principal
 
   int var; //variável para escolher a opção
-  cidade a; //variável para a cidade
 
+  cout<<"quantas cidades deseja cadastrar? ";
+  int num_cidades, num_estradas;
+  cin >> num_cidades;
+  cout<<"quantas estradas deseja cadastrar? ";
+  cin >> num_estradas;
+
+  Cidade cidades[num_cidades];//variável para a cidade
+  
   while(true){ //loop para escolher a opção
 
-    cout<<"1 - Cadastrar cidade"<<endl;
+    cout<<"1 - Cadastrar cidades"<<endl;
     cout<<"2 - Mostrar conteudo"<<endl;
     cout<<"3 - Sair"<<endl;
 
@@ -45,18 +94,14 @@ int main() { //função principal
   switch(var){ //switch para escolher a opção
 
     case 1: //cria a cidade
-      a = cria_cidade();
+      cria_cidade(num_cidades, num_estradas, cidades);
       break;
     
     case 2: //mostra o conteúdo da cidade
-      cout<<"nome: "<<a.nome<<endl;
-      cout<<"codigo: "<<a.codigo<<endl;
-      cout<<"centro pokemon: ";
-      if(a.centro_pokemon == 1)
-        cout<<"sim"<<endl;
-      else
-        cout<<"nao"<<endl;
-        break;
+
+      mostra_cidades(num_cidades, cidades);
+      
+      break;
       
     case 3: //sai do programa
       return 0;
