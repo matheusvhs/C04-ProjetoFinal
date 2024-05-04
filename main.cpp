@@ -2,7 +2,7 @@
 /*Alunos:
 Guilherme Bastos Florêncio - 322 - GES
 Matheus Vieira Honorio de Souza - 525 - GES
-Otavio Augusto Silva Lima - 279 - GES
+Otavio Augusto Silva Lima - 279 - GES
 Vinicius Vilela Paulino - 436 - GES
 Vitor Dias Carlos - 445 - GES
 */
@@ -28,7 +28,7 @@ struct Cidade{ //estrutura cidade
   list<estrada> vizinhos;
 };
 
-int  dijkstra(Cidade cidade[], int nVertices, int start, int end){
+void dijkstra(Cidade cidade[], int nVertices, int start){
   bool intree[nVertices];
   int distance[nVertices], parent[nVertices];
   for(int u = 0; u < nVertices; u++){
@@ -61,54 +61,27 @@ int  dijkstra(Cidade cidade[], int nVertices, int start, int end){
     }
   }
 
-  return distance[end];
+  int distancia_centro = INT_MAX, end;
+  for(int i = 0; i < nVertices; i++){
+	  if(cidade[i].centro_pokemon == 1 && distancia_centro > distance[i]){
+		  distancia_centro = distance[i];
+		  end = i;
+	  } 
+  }
   
-}
-
-void  show_dijkstra(Cidade cidade[], int nVertices, int start, int end){
-  bool intree[nVertices];
-  int distance[nVertices], parent[nVertices];
-  for(int u = 0; u < nVertices; u++){
-    intree[u] = false;
-    distance[u] = INT_MAX;
-    parent[u] = -1;
+  
+  int caminho[nVertices], x = 0;
+  cout<<"Menor caminho: ";
+  for(int i = end; i != -1; i = parent[i]){
+	  caminho[x] = i;
+	  x++;
   }
-  distance[start] = 0;
-  int v = start;
-  while(intree[v] == false){
-    intree[v] = true;
-    list<estrada>::iterator p;
-    for(p = cidade[v].vizinhos.begin(); p != cidade[v].vizinhos.end(); p++){
-      int dest = p->destino;
-      int weight = p->distancia;
-      if(distance[dest] > distance[v]+weight){
-        distance[dest] = distance[v]+weight;
-        parent[dest] = v;
-
-      }
-    }
-
-      v = 0;
-      int dist = INT_MAX;
-    for(int u = 0; u < nVertices; u++){
-      if(intree[u] == false && dist > distance[u]){
-        dist = distance[u];
-        v = u;
-      }
-    }
-  }
-
-	int caminho[nVertices], x = 0;
-	cout<<"Menor caminho: ";
-	for(int i = end; i != -1; i = parent[i]){
-			caminho[x] = i;
-			x++;
-	}
 	
-	for(int i = x-1; i >= 0; i--){
-		cout<<cidade[caminho[i]].nome;
-		if(i >= 1)
-			cout<<"->";
+  for(int i = x-1; i >= 0; i--){
+  	
+	cout<<cidade[caminho[i]].nome;
+	if(i >= 1)
+		cout<<"->";
 	}
   cout<<endl;
 }
@@ -197,25 +170,11 @@ int main() { //função principal
       
       cin>>a;
       
-      for(int i = 0; i < num_cidades; i++){
-		  if(i != a)
-		  {
-		  	custos[i] = dijkstra(cidades, num_cidades, a, i);
-		  }	  
-	  }
-	  if(cidades[a].centro_pokemon == 1){
+	  if(cidades[a].centro_pokemon == 1)
 		  cout<<"esta cidade ja tem centro pokemon"<<endl;
-	  }else
-	  {	  	
-		   	for(int i = 0; i < num_cidades; i++) {
-    			if (i != a && cidades[i].centro_pokemon == 1) { 
-        			if (b == -1 || custos[i] < custos[b]) {
-       	       	   	    b = i; 
- 	 	 	   	   	 }
- 				}
-		   }
-      show_dijkstra(cidades, num_cidades, a, b);
-	  }
+	  else	  	
+      	  dijkstra(cidades, num_cidades, a);
+	  
       break;
     
     case 4: //sai do programa
