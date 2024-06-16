@@ -103,7 +103,7 @@ treenodeptr rotate_left(treenodeptr x){
 	return y;	
 }
 
-void tinsert(treenodeptr &p, pokemon poke) {
+void tinsert(treenode*& p, pokemon poke) {
     if (p == NULL) {
         p = new treenode;
         p->info = poke;
@@ -114,8 +114,11 @@ void tinsert(treenodeptr &p, pokemon poke) {
         tinsert(p->left, poke);
     } else if (poke.nome > p->info.nome) {
         tinsert(p->right, poke);
+    } else {
+        // O Pokémon já existe na árvore, atualize o tipo
+        p->info.tipo = poke.tipo;
     }
-    
+
     p->altura = 1 + maior(altura(p->left), altura(p->right));
 
     int balance = balanceamento(p);
@@ -131,39 +134,6 @@ void tinsert(treenodeptr &p, pokemon poke) {
         p = rotate_right(p);
     }
     if (balance < -1 && poke.nome < p->right->info.nome) {
-        p->right = rotate_right(p->right);
-        p = rotate_left(p);
-    }
-}
-
-void tinsertTipo(treenodeptr &p, pokemon poke) {
-    if (p == NULL) {
-        p = new treenode;
-        p->info = poke;
-        p->left = NULL;
-        p->right = NULL;
-        p->altura = 0;
-    } else if (poke.tipo < p->info.tipo) {
-        tinsertTipo(p->left, poke);
-    } else if (poke.tipo > p->info.tipo) {
-        tinsertTipo(p->right, poke);
-    }
-
-    p->altura = 1 + maior(altura(p->left), altura(p->right));
-
-    int balance = balanceamento(p);
-
-    if (balance > 1 && poke.tipo < p->left->info.tipo) {
-        p = rotate_right(p);
-    }
-    if (balance < -1 && poke.tipo > p->right->info.tipo) {
-        p = rotate_left(p);
-    }
-    if (balance > 1 && poke.tipo > p->left->info.tipo) {
-        p->left = rotate_left(p->left);
-        p = rotate_right(p);
-    }
-    if (balance < -1 && poke.tipo < p->right->info.tipo) {
         p->right = rotate_right(p->right);
         p = rotate_left(p);
     }
@@ -486,7 +456,7 @@ int main() { //função principal
 
   Cidade cidades[num_cidades];//variável para a cidade
   pokemon poke;
-  treenodeptr arvore = NULL, result, arvore_tipo = NULL;
+  treenodeptr arvore = NULL, result;
   string pesquisa;
   ponto point;
   bool cidades_criadas = false;
@@ -564,7 +534,6 @@ int main() { //função principal
       cin>>poke.coordenada.y;
 
       tinsert(arvore,poke);
-      tinsertTipo(arvore_tipo,poke);
       
       cout<<endl;
       break;
@@ -583,7 +552,7 @@ int main() { //função principal
     	cin.ignore();
     	getline(cin, pesquisa);
     	
-    	if(tremove(arvore, pesquisa) == true && tremove(arvore_tipo,pesquisa)){
+    	if(tremove(arvore, pesquisa) == true){
 			cout<<"pokemon removido"<<endl;
 		}else{
 			cout<<"pokemon para remocao nao encontrado"<<endl;
@@ -611,7 +580,7 @@ int main() { //função principal
       break;
     
     case 8:
-      emOrdem(arvore_tipo);
+      emOrdem(arvore);
       cout<<endl;
 
       
