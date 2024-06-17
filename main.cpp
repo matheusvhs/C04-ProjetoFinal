@@ -1,12 +1,12 @@
 //Trabalho Pokedex - C04
 /*Alunos:
-Guilherme Bastos Florêncio - 322 - GES
+Guilherme Bastos Flor�ncio - 322 - GES
 Matheus Vieira Honorio de Souza - 525 - GES
-Otavio Augusto Silva Lima - 279 - GES
+Otavio Augusto Silva Lima - 279�- GES
 Vinicius Vilela Paulino - 436 - GES
 Vitor Dias Carlos - 445 - GES
 */
-//O código cria cidades com nome, código, e se tem ou nao centro Pokemon, e mostra a cidade cadastrada.
+//O c�digo cria cidades com nome, c�digo, e se tem ou nao centro Pokemon, e mostra a cidade cadastrada.
 
 #include <iostream>
 #include <string>
@@ -38,6 +38,7 @@ struct treenode{
   struct treenode* left;
   struct treenode* right;
   int altura;
+  list<pokemon> pokemons;
 };
 
 struct estrada{ //estrutura estrada
@@ -137,16 +138,19 @@ void tinsert(treenodeptr &p, pokemon poke) {
 }
 
 void tinsertTipo(treenodeptr &p, pokemon poke) {
-    if (p == NULL) {
+   if (p == NULL) {
         p = new treenode;
         p->info = poke;
         p->left = NULL;
         p->right = NULL;
         p->altura = 0;
+        p->pokemons.push_back(poke);
     } else if (poke.tipo < p->info.tipo) {
         tinsertTipo(p->left, poke);
     } else if (poke.tipo > p->info.tipo) {
         tinsertTipo(p->right, poke);
+    } else {
+        p->pokemons.push_back(poke);
     }
 
     p->altura = 1 + maior(altura(p->left), altura(p->right));
@@ -180,6 +184,18 @@ treenodeptr tsearch(treenodeptr p, string nome){
     return tsearch(p->right,nome);	
 }
 
+treenodeptr tsearchTipo(treenodeptr p, string tipo) {
+    if (p == NULL) {
+        return NULL;
+    } else if (tipo == p->info.tipo) {
+        return p;
+    } else if (tipo < p->info.tipo) {
+        return tsearchTipo(p->left, tipo);
+    } else {
+        return tsearchTipo(p->right, tipo);
+    }
+}
+
 treenodeptr tpointsmaller(treenodeptr &p){
 	treenodeptr t = p;
 	if(p->left == NULL){
@@ -192,69 +208,132 @@ treenodeptr tpointsmaller(treenodeptr &p){
 
 
 bool tremove(treenodeptr &p, string nome) {
-	if (p == NULL)
-		return false;
+    if (p == NULL)
+        return false;
 
-	bool result;
-	if (nome == p->info.nome) {
-		if (p->left == NULL || p->right == NULL) {
-			treenodeptr temp = p->left ? p->left : p->right;
-			if (temp == NULL) {
-				temp = p;
-				p = NULL;
-			} else {
-				*p = *temp;
-			}
-			delete temp;
-		} else {
-			treenodeptr temp = tpointsmaller(p->right);
-			p->info = temp->info;
-			result = tremove(p->right, temp->info.nome);
-		}
-		result = true;
-	} else if (nome < p->info.nome) {
-		result = tremove(p->left, nome);
-	} else {
-		result = tremove(p->right, nome);
-	}
+    bool result;
+    if (nome == p->info.nome) {
+        if (p->left == NULL || p->right == NULL) {
+            treenodeptr temp = p->left ? p->left : p->right;
+            if (temp == NULL) {
+                temp = p;
+                p = NULL;
+            } else {
+                *p = *temp;
+            }
+            delete temp;
+        } else {
+            treenodeptr temp = tpointsmaller(p->right);
+            p->info = temp->info;
+            result = tremove(p->right, temp->info.nome);
+        }
+        result = true;
+    } else if (nome < p->info.nome) {
+        result = tremove(p->left, nome);
+    } else {
+        result = tremove(p->right, nome);
+    }
 
-	if (p == NULL)
-		return result;
+    if (p == NULL)
+        return result;
 
-	p->altura = maior(altura(p->left), altura(p->right)) + 1;
-	int balance = balanceamento(p);
+    p->altura = maior(altura(p->left), altura(p->right)) + 1;
+    int balance = balanceamento(p);
 
-	if (balance > 1 && balanceamento(p->left) >= 0)
-		p = rotate_right(p);
+    if (balance > 1 && balanceamento(p->left) >= 0)
+        p = rotate_right(p);
 
-	if (balance > 1 && balanceamento(p->left) < 0) {
-		p->left = rotate_left(p->left);
-		p = rotate_right(p);
-	}
+    if (balance > 1 && balanceamento(p->left) < 0) {
+        p->left = rotate_left(p->left);
+        p = rotate_right(p);
+    }
 
-	if (balance < -1 && balanceamento(p->right) <= 0)
-		p = rotate_left(p);
+    if (balance < -1 && balanceamento(p->right) <= 0)
+        p = rotate_left(p);
 
-	if (balance < -1 && balanceamento(p->right) > 0) {
-		p->right = rotate_right(p->right);
-		p = rotate_left(p);
-	}
+    if (balance < -1 && balanceamento(p->right) > 0) {
+        p->right = rotate_right(p->right);
+        p = rotate_left(p);
+    }
 
-	return result;
+    return result;
 }
 
-void emOrdem(treenodeptr raiz) {
-	if (raiz != NULL) {
-		emOrdem(raiz->left);
-		cout << raiz->info.nome << " ";
-		treenodeptr temp = raiz->right;
-		while (temp != NULL && temp->info.nome == raiz->info.nome) {
-			temp = temp->right;
-		}
-		raiz->right = temp;
-		emOrdem(raiz->right);
-	}
+bool tremoveTipo(treenodeptr& p, string tipo, string nome) {
+    if (p == NULL)
+        return false;
+
+    bool result;
+    if (tipo == p->info.tipo) {
+        // Procura o Pok�mon pelo nome e remove da lista
+        for (list<pokemon>::iterator it = p->pokemons.begin(); it != p->pokemons.end(); ++it) {
+            if (it->nome == nome) {
+                p->pokemons.erase(it);
+                break;
+            }
+        }
+        // Se a lista estiver vazia, remove o n� da �rvore
+        if (p->pokemons.empty()) {
+            if (p->left == NULL || p->right == NULL) {
+                treenodeptr temp = p->left ? p->left : p->right;
+                if (temp == NULL) {
+                    temp = p;
+                    p = NULL;
+                } else {
+                    *p = *temp;
+                }
+                delete temp;
+            } else {
+                treenodeptr temp = tpointsmaller(p->right);
+                p->info = temp->info;
+                p->pokemons = temp->pokemons;
+                result = tremoveTipo(p->right, temp->info.tipo, temp->info.nome);
+            }
+        }
+        result = true;
+    } else if (tipo < p->info.tipo) {
+        result = tremoveTipo(p->left, tipo, nome);
+    } else {
+        result = tremoveTipo(p->right, tipo, nome);
+    }
+
+    if (p == NULL)
+        return result;
+
+    p->altura = maior(altura(p->left), altura(p->right)) + 1;
+    int balance = balanceamento(p);
+
+    if (balance > 1 && balanceamento(p->left) >= 0)
+        p = rotate_right(p);
+
+    if (balance > 1 && balanceamento(p->left) < 0) {
+        p->left = rotate_left(p->left);
+        p = rotate_right(p);
+    }
+
+    if (balance < -1 && balanceamento(p->right) <= 0)
+        p = rotate_left(p);
+
+    if (balance < -1 && balanceamento(p->right) > 0) {
+        p->right = rotate_right(p->right);
+        p = rotate_left(p);
+    }
+
+    return result;
 }
+
+void emOrdem (treenodeptr p){
+   if (p != NULL) {
+        emOrdem(p->left);
+        cout << "Tipo: " << p->info.tipo << endl;
+        list<pokemon>::iterator it;
+        for(it = p->pokemons.begin(); it != p->pokemons.end(); ++it){
+  	  	    cout << "  Codigo: " << it->codigo << ", Nome: " << it->nome << endl;
+		}
+        emOrdem(p->right);
+    }
+  }
+
 
 void emOrdem_info (treenodeptr raiz){
   if(raiz != NULL){
@@ -267,6 +346,18 @@ void emOrdem_info (treenodeptr raiz){
     
     emOrdem_info(raiz->right);
   }
+}
+
+string tipo_do_nome(treenodeptr p, string nome) {
+    if (p == NULL) {
+        return "";
+    } else if (nome == p->info.nome) {
+        return p->info.tipo;
+    } else if (nome < p->info.nome) {
+        return tipo_do_nome(p->left, nome);
+    } else {
+        return tipo_do_nome(p->right, nome);
+    }
 }
 
 int poketipos(treenodeptr raiz, string tipo) {
@@ -341,7 +432,7 @@ void dijkstra(Cidade cidade[], int nVertices, int start){
   cout<<endl;
 }
 
- void cria_cidade(int num_cidades,int num_estradas, Cidade cidade[]){ //função para criar cidade
+ void cria_cidade(int num_cidades,int num_estradas, Cidade cidade[]){ //fun��o para criar cidade
 
   for(int i=0; i< num_cidades; i++){
     cidade[i].codigo = i;
@@ -474,9 +565,11 @@ double gift_wraping(ponto points[], int n) {
     return perimetro;
 }
 
-int main() { //função principal
 
-  int var; //variável para escolher a opção
+
+int main() { //fun��o principal
+
+  int var; //vari�vel para escolher a op��o
 
   cout<<"quantas cidades deseja cadastrar? ";
   int num_cidades, num_estradas, codigo = 0;
@@ -484,17 +577,17 @@ int main() { //função principal
   cout<<"quantas estradas deseja cadastrar? ";
   cin >> num_estradas;
 
-  Cidade cidades[num_cidades];//variável para a cidade
+  Cidade cidades[num_cidades];//vari�vel para a cidade
   pokemon poke;
   treenodeptr arvore = NULL, result, arvore_tipo = NULL;
-  string pesquisa;
+  string pesquisa, tipo;
   ponto point;
   bool cidades_criadas = false;
   ponto encontrados[100];
   int count = 0;
   int num_pokemons;
 
-  while(true){ //loop para escolher a opção
+  while(true){ //loop para escolher a op��o
 
     cout<<"0 - Sair"<<endl;
     cout<<"1 - Cadastrar cidades"<<endl;
@@ -504,17 +597,17 @@ int main() { //função principal
     cout<<"5 - Informacoes dos Pokemons"<<endl;
     cout<<"6 - Remover Pokemon"<<endl;
     cout<<"7 - Procurar Pokemon"<<endl;
-    cout<<"8 - Mostrar Pokemons"<<endl;
+    cout<<"8 - Mostrar Pokemons por tipo"<<endl;
     cout<<"9 - Contagem de tipo"<<endl;
     cout<<"10 - Quantidade de pokemons proximos"<<endl;
     cout<<"11 - Perimetro minimo dos pokemons proximos"<<endl;
 
-    cin>>var; //escolhe a opção	
+    cin>>var; //escolhe a op��o	
 	cout<<endl;
 	
     int a;
 
-  switch(var){ //switch para escolher a opção
+  switch(var){ //switch para escolher a op��o
 
     case 0:
       return 0;
@@ -525,7 +618,7 @@ int main() { //função principal
       cout<<endl;
       break;
 
-    case 2: //mostra o conteúdo do Grafo Cidades
+    case 2: //mostra o conte�do do Grafo Cidades
     	
 	  if(cidades_criadas == true){
       	  mostra_cidades(num_cidades, cidades);
@@ -537,7 +630,7 @@ int main() { //função principal
 	  cout<<endl;
       break;
 
-    case 3: //mostra a rota mais próxima até um centro pokemon
+    case 3: //mostra a rota mais pr�xima at� um centro pokemon
 
       cout<<"em que cidade vc esta ? ";
 
@@ -582,15 +675,16 @@ int main() { //função principal
     	cout<<"pokemon a ser removido: ";
     	cin.ignore();
     	getline(cin, pesquisa);
-    	
-    	if(tremove(arvore, pesquisa) == true && tremove(arvore_tipo,pesquisa)){
-			cout<<"pokemon removido"<<endl;
-		}else{
-			cout<<"pokemon para remocao nao encontrado"<<endl;
-		}
-		
-		cout<<endl;
-		break;
+        tipo = tipo_do_nome(arvore, pesquisa);
+        if (!tipo.empty()) {
+            tremove(arvore, pesquisa);
+            tremoveTipo(arvore_tipo, tipo, pesquisa);
+            cout<<pesquisa<<" removido"<<endl;
+        } else {
+             cout << "Pokemon n�o encontrado." << endl;
+        }
+        cout<<endl;
+            break;
     	
 
     case 7:
@@ -613,7 +707,6 @@ int main() { //função principal
     case 8:
       emOrdem(arvore_tipo);
       cout<<endl;
-
       
       cout<<endl;
       break;
@@ -653,17 +746,17 @@ int main() { //função principal
         if (perimetro != -1) {
             cout << "Perimetro minimo = " << perimetro <<"m"<< endl;
         } else {
-            cout << "Não foi possível calcular o perímetro mínimo." << endl;
+            cout << "N�o foi poss�vel calcular o per�metro m�nimo." << endl;
         }
     } else {
-        cout << "Não há pokémons suficientes dentro do raio para calcular o perímetro." << endl;
+        cout << "N�o h� pok�mons suficientes dentro do raio para calcular o per�metro." << endl;
     }
     
     cout << endl;
     break;
 
     
-    default: //opção invalida
+    default: //op��o invalida
       cout<<endl;
       break;
 
