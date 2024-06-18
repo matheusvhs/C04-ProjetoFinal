@@ -1,6 +1,5 @@
 # Projeto Pokedex - C204
 
-* Guilherme Bastos Florêncio - 322 - GES
 * Matheus Vieira Honorio de Souza - 525 - GES
 * Otavio Augusto Silva Lima - 279 - GES
 * Vinicius Vilela Paulino - 436 - GES
