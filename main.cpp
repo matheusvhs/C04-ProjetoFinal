@@ -567,7 +567,13 @@ double gift_wraping(ponto points[], int n) {
     return perimetro;
 }
 
-
+void deleteTree(treenodeptr p){ //função para deletar a arvore
+  if(p != NULL){
+    deleteTree(p->left);
+    deleteTree(p->right);
+    delete p;
+  }
+}
 
 int main() { //função principal
 
@@ -615,6 +621,10 @@ int main() { //função principal
   switch(var){ //switch para escolher a opção
 
     case 0:
+
+      deleteTree(arvore);
+      deleteTree(arvore_tipo);
+
       return 0;
 
     case 1: //cria a cidade
@@ -624,15 +634,16 @@ int main() { //função principal
       break;
 
     case 2: //mostra o conteudo do Grafo Cidades
-    	
-	  if(cidades_criadas == true){
-      	  mostra_cidades(num_cidades, cidades);
-      	  cout<<endl;
-	  }
-      else
-      	  cout<<"Insira as cidades antes de mostrar conteudo"<<endl;
-        
-	  cout<<endl;
+
+    if(cidades_criadas == true){
+      mostra_cidades(num_cidades, cidades);
+      cout<<endl;
+    }
+    else
+      cout<<"Insira as cidades antes de mostrar conteudo"<<endl;
+
+    cout<<endl;
+    
       break;
 
     case 3: //mostra a rota mais proxima até um centro pokemon

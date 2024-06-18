@@ -1,3 +1,6 @@
 {
-    "c-cpp-compile-run.output-location": "C:\\Users\\mathe\\AppData\\Local\\Temp\\output"
+    "c-cpp-compile-run.output-location": "C:\\Users\\mathe\\AppData\\Local\\Temp\\output",
+    "files.associations": {
+        "iostream": "cpp"
+    }
 }
