@@ -605,6 +605,7 @@ int main() { //função principal
     cout<<"9 - Contagem de tipo"<<endl;
     cout<<"10 - Quantidade de Pokemons proximos"<<endl;
     cout<<"11 - Perímetro minimo dos Pokemons proximos"<<endl;
+    cout<<endl;
 
     cin>>var; //escolhe a opçãoo	
 	cout<<endl;
@@ -648,7 +649,7 @@ int main() { //função principal
       cout<<endl;
       break;
 
-    case 4:
+    case 4: //cadastra um pokemon
       poke.codigo = codigo;
       codigo++;
       cout<<"Nome do Pokemon: ";
@@ -666,7 +667,7 @@ int main() { //função principal
       cout<<endl;
       break;
   
-    case 5:
+    case 5: //mostra as informações dos pokemons
     	
     	emOrdem_info(arvore);
     	
@@ -675,7 +676,7 @@ int main() { //função principal
   
   
   
-    case 6:
+    case 6: //remove um pokemon
     	cout<<"Pokemon a ser removido: ";
     	cin.ignore();
     	getline(cin, pesquisa);
@@ -691,7 +692,7 @@ int main() { //função principal
             break;
     	
 
-    case 7:
+    case 7: //procura um pokemon
       cout<<"Nome do pokemon a ser porcurado: ";
       cin.ignore();
       getline(cin, pesquisa);
@@ -708,7 +709,7 @@ int main() { //função principal
       cout<<endl;
       break;
     
-    case 8:
+    case 8: //mostra os pokemons por tipo
       emOrdem(arvore_tipo);
       cout<<endl;
       
@@ -716,7 +717,7 @@ int main() { //função principal
       break;
 
    
-    case 9:
+    case 9: //conta a quantidade de pokemons de um tipo
       cout<<"Tipo a ser contado: ";
       cin.ignore();
       getline(cin, pesquisa);
@@ -726,7 +727,7 @@ int main() { //função principal
       cout<<endl;
       break;
 
-    case 10:
+    case 10: //conta a quantidade de pokemons proximos
  	   cout<<"Sua coordenada x: ";
  	   cin>>point.x;
  	   cout<<"Sua coordenada y: ";
@@ -736,7 +737,7 @@ int main() { //função principal
  	   cout<<endl;
  	   break;
     
-    case 11:
+    case 11: //calcula o perimetro minimo dos pokemons proximos
     cout << "Sua coordenada x: ";
     cin >> point.x;
     cout << "Sua coordenada y: ";
