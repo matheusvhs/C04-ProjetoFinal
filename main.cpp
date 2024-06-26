@@ -6,7 +6,6 @@ Otavio Augusto Silva Lima - 279 - GES
 Vinicius Vilela Paulino - 436 - GES
 Vitor Dias Carlos - 445 - GES
 */
-//O código cria cidades com nome, código, e se tem ou nao centro Pokemon, e mostra a cidade cadastrada.
 
 #include <iostream>
 #include <string>
