@@ -1,6 +1,6 @@
 # Grafo de Teste
 
-![Grafo](Grafo.png)
+![Grafo](.vscode/Grafo.png)
 
 ## Caso de Teste
 
