@@ -1,6 +1,6 @@
 # Grafo de Teste
 
-![Grafo](.vscode/Grafo.png)
+![Grafo](https://raw.githubusercontent.com/matheusvhs/assets/main/C04-ProjetoFinal/Grafo.png)
 
 ## Caso de Teste
 
